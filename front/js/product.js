@@ -24,6 +24,40 @@ console.log(error)
 
 
 //Insérer un produit et ses détails dans la page 
+const item__img = document.querySelector(".item__img")
+console.log(item__img);
+function displayProduct(img){
+
+  const item__img = document.createElement("item__img")
+  img.setAttribue("src".imageUrl)
+  img.setAttribue("alt".altTxt)
+  item__img.appendChild(img);
+}
+
+displayProduct();
+
+
+function displayDesciption(products) {
+
+const item__content = document.getElementById("item__content")
+  for(let i in products){
+
+let title = document.createElement("js_title")
+  title.innerHTML = products[i].name;
+  item__content.appendChild(title);
+
+let prix = document.createElement("js_price")
+  prix.innerHTML = products[i].price;
+  item__content.appendChild(prix);
+
+let description = document.createElement("js_description")
+  description.innerHTML = products[i].description;
+  item__content.appendChild(description);
+  
+}  
+}
+
+displayDesciption();
 
 
 
