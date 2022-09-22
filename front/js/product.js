@@ -11,57 +11,61 @@ console.log(params);
 const id = params.get("id");
 console.log(id);
 
-// affichage du produit qui a été sélectioner par l'ID
+// récupérer les données du produit qui a été sélectioner par l'ID
 
-  fetch(`http://localhost:3000/api/products/${id}`)
-.then(res => res.json())
-.then(function(data){
-    console.log(data)
-})
-.catch (function (error){
-console.log(error)
-})  
+const getProduct = async()=>{
+  await   fetch(`http://localhost:3000/api/products/${id}`)
+  .then(res => res.json())
+  .then(function(product){
+      //console.log(data);
+      showProduct(product);
+  })
+  .catch (function (error){
+  console.log(error)
+  })    
+}
 
+getProduct();
 
 //Insérer un produit et ses détails dans la page 
-const item__img = document.querySelector(".item__img")
-console.log(item__img);
-function displayProduct(img){
 
-  const item__img = document.createElement("item__img")
-  img.setAttribue("src".imageUrl)
-  img.setAttribue("alt".altTxt)
-  item__img.appendChild(img);
+// stocker dans des variables les classes et les id du fichier HTML
+let picture = document.querySelector(".item__img");
+console.log(picture);
+
+let title = document.getElementById("js_title");
+console.log(title);
+
+let price = document.getElementById("js_price");
+console.log(price);
+
+let description = document.getElementById("js_description");
+console.log(description);
+
+let colorsArray = document.getElementById("js_colors");
+console.log(colorsArray);
+
+//lier les éléments HTML avec l'API
+
+const showProduct = (product) => {
+  //await getProduct();
+  console.log(product);
+  console.log(product.imageUrl);
+  console.log(product.name);
+
+  const image = document.createElement("img");
+  image.setAttribute('src', product.imageUrl);
+  image.setAttribute('alt', product.altTxt);
+  picture.appendChild(image);
+
+  title.innerHTML = product.name;
+
+  price.innerHTML = product.price;
+
+  description.innerHTML = product.description;
+
+  product.colors.forEach(function(color) {
+    console.log(color);
+
+  });
 }
-
-displayProduct();
-
-
-function displayDesciption(products) {
-
-const item__content = document.getElementById("item__content")
-  for(let i in products){
-
-let title = document.createElement("js_title")
-  title.innerHTML = products[i].name;
-  item__content.appendChild(title);
-
-let prix = document.createElement("js_price")
-  prix.innerHTML = products[i].price;
-  item__content.appendChild(prix);
-
-let description = document.createElement("js_description")
-  description.innerHTML = products[i].description;
-  item__content.appendChild(description);
-  
-}  
-}
-
-displayDesciption();
-
-
-
-
-
-
-
