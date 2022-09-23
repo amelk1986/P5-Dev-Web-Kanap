@@ -67,5 +67,12 @@ const showProduct = (product) => {
   product.colors.forEach(function(color) {
     console.log(color);
 
+  let tagOption = document.createElement("option");
+
+  tagOption.innerHTML = `${color}`;
+  tagOption.value = `${color}`;
+
+  colorsArray.appendChild(tagOption);
+  console.log(tagOption);
   });
 }
