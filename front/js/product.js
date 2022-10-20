@@ -103,8 +103,6 @@ const addKanapToCart = (productId) => {
        id: productId,
        color: colorsArray.value,
        quantity: selectQuantity.value,
-       image: imageURL,
-       alt: imageAlt,
      };
  
      // je déclare une variable productInLocalStorage 
