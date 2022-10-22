@@ -138,9 +138,9 @@ const addKanapToCart = (productId) => {
          localStorage.setItem('product', JSON.stringify(productInLocalStorage));
          update = true;
          addConfirm();
-       }
+       } 
      });
- 
+     
      //
        if (!update) {
        addProductLocalStorage();
@@ -156,4 +156,4 @@ const addKanapToCart = (productId) => {
        addConfirm();
      }
    });
- }
+  }
