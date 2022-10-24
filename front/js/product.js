@@ -1,4 +1,4 @@
-let colorsArray = document.getElementById("js_colors");
+
 // Récupération du paramètre id stocké dans l'URL de la page
 const products_url_id = window.location.search;
 const params = new URLSearchParams(products_url_id);
@@ -20,6 +20,7 @@ function showProduct(product){
   let picture = document.querySelector(".item__img");
   let title = document.getElementById("js_title");
   let price = document.getElementById("js_price");
+  let colorsArray = document.getElementById("js_colors");
   let description = document.getElementById("js_description");
 
   const image = document.createElement("img");
@@ -46,7 +47,7 @@ function showProduct(product){
 function addKanapToCart(productId){
   /**
    * Au clic sur ajouter au panier :
-   * 1- Vérifier qu'une couleur et un nombre d'article soient bien renseignés, (Attention le nombre doit être entre 1 et 100)
+   * 1- Vérifier qu'une couleur et un nombre d'article soient bien renseignés
    * 2- Récupérer l'id, la quantité et la couleur sélectionnée
    * 3- Vérifier si l'utilisateur a déjà un panier dans le localStorage, si non alors le créer + ajouter le produit
    * 4- Si l'utilisateur a déjà des produits dans son panier, alors je récupère le contenu du localStorage
@@ -57,8 +58,7 @@ function addKanapToCart(productId){
   const buttonElement = document.getElementById("js_addToCart");
 
   buttonElement.addEventListener('click', () => {
-    // ATTENTION vérifier que la couleur est bien sélectionnée, et que la quantité est bien choisie et comprise entre 1 et 100
-    //           avant de remplir l'objet selection avec
+
     let selectQuantity = document.getElementById("js_quantity");
 
     const selection = {
@@ -66,14 +66,11 @@ function addKanapToCart(productId){
       color: colorsArray.value,
       quantity: selectQuantity.value,
     };
-    // ATTENTION productInLocalStorage utilise 2 fonctions, il serait mieux pour faire la vérification existe ou pas, de le faire sur le getItem
-    //           soit : if(localStorage.getItem('product')) alors on récupère les infos (parse) et on fait ce qui doit suivre
-    //           else on créé le tableau + ajout du produit + setItem
-    //           car imagine si product n'existe pas, tu lui demandes de faire une fonction parse sur du vide c'est dommage ^^
+  
     // Récupère les données contenues dans l'objet product du localStorage 
     let productInLocalStorage =  JSON.parse(localStorage.getItem('product'));
  
-    // j'ajoute les produits sélectionnés dans le localStorage
+    // ajouter les produits sélectionnés dans le localStorage
     function addProductLocalStorage(){
       // Ajout de l'objet, contenant les infos du produit choisi, dans le tableau de product (récupéré juste avant du localStorage)
       productInLocalStorage.push(selection);
@@ -81,7 +78,7 @@ function addKanapToCart(productId){
       localStorage.setItem('product', JSON.stringify(productInLocalStorage));
     };
 
-    // je crée une boîte de dialogue pour confirmer l'ajout au panier
+    // créer une boîte de dialogue pour confirmer l'ajout au panier
     let addConfirm = () => {
       alert('Le produit a bien été ajouté au panier');
     };
@@ -105,7 +102,7 @@ function addKanapToCart(productId){
       addConfirm();
       };
     } else { // s'il n'y a aucun produit enregistré dans le localStorage 
-      // je crée alors un tableau avec les éléments choisi par l'utilisateur
+      // créer alors un tableau avec les éléments choisi par l'utilisateur
       productInLocalStorage = [];
       addProductLocalStorage();
       addConfirm();
