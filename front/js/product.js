@@ -1,3 +1,4 @@
+let colorsArray = document.getElementById("js_colors");
 
 // Récupération du paramètre id stocké dans l'URL de la page
 const products_url_id = window.location.search;
@@ -20,7 +21,7 @@ function showProduct(product){
   let picture = document.querySelector(".item__img");
   let title = document.getElementById("js_title");
   let price = document.getElementById("js_price");
-  let colorsArray = document.getElementById("js_colors");
+  
   let description = document.getElementById("js_description");
 
   const image = document.createElement("img");
