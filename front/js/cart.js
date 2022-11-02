@@ -139,10 +139,23 @@ function totalArticles() {
      totalQuantity.textContent = totalItems;
  }
  
+ //je calcule le montant total du panier
+
+ function totalPrice(){
+   let total = 0;
+   productInLocalStorage.forEach((product)=>{
+      const totalUnitPrice = product.price * product.quantity;
+      total += totalUnitPrice;
+   })
+   const totalPrice = document.getElementById("totalPrice");
+   totalPrice.textContent = total;
+   }
+ 
  async function main() {
    //const products = await getProduct();
    getCartProducts();
    totalArticles();
+   totalPrice();
  }
  
  main();
