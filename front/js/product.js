@@ -4,6 +4,7 @@ let colorsArray = document.getElementById("js_colors");
 const products_url_id = window.location.search;
 const params = new URLSearchParams(products_url_id);
 const id = params.get("id");
+let price = document.getElementById("js_price");
 
 // récupérer les données du produit qui a été sélectioner par l'ID
 
@@ -20,7 +21,6 @@ function showProduct(product){
 
   let picture = document.querySelector(".item__img");
   let title = document.getElementById("js_title");
-  let price = document.getElementById("js_price");
   
   let description = document.getElementById("js_description");
 
@@ -66,6 +66,7 @@ function addKanapToCart(productId){
       id: productId,
       color: colorsArray.value,
       quantity: selectQuantity.value,
+      price: parseInt(price.textContent),
     };
   
     // Récupère les données contenues dans l'objet product du localStorage 
