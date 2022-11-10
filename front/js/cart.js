@@ -57,10 +57,9 @@ function getProduct(id) {
  
  async function displayProductFromApi(product) {
 
-   // let product = await getProduct();
    let cartArticles = document.querySelector(".cart__item");
  
-     // ajouter l'élément div qui va contenir l'image
+// ajouter l'élément div qui va contenir l'image
      let divCartImages = document.createElement("div");
      divCartImages.className = "cart__item__img";
      cartArticles.appendChild(divCartImages);
@@ -84,7 +83,7 @@ function getProduct(id) {
       title.innerHTML = product.name;
       divCartDescription.appendChild(title);
 
-     // ajouter l'élément div setting
+// ajouter l'élément div setting
 
       let divCartSetting = document.createElement("div");
       divCartSetting.className = "cart__item__content__settings";
@@ -111,28 +110,28 @@ function getProduct(id) {
       let deleteItem = document.createElement("p");
       deleteItem.className = "deleteItem";
       divDeleteSettigs.appendChild(deleteItem);
-      deleteItem.innerHTML = 'Supprimer';
+      deleteItem.innerHTML = "Supprimer";
  }
 
  // j'affiche le total des articles dans le panier
 function totalArticles() {
    let totalItems = 0;
    for (l in productInLocalStorage) {
-     // analyser et convertir la valeur 'quantité' dans le localstorage en une chaîne
-     // et renvoie un entier (parseInteger), sur la base décimale de 10
-     const newQuantity = parseInt(productInLocalStorage[l].quantity, 10);
+// analyser et convertir la valeur 'quantité' dans le localstorage en une chaîne
+// et renvoie un entier (parseInteger), sur la base décimale de 10
+   const newQuantity = parseInt(productInLocalStorage[l].quantity, 10);
  
-     // attribuer la valeur retournée par parseInt à la variable totalItems
-     totalItems += newQuantity;
-   }
-     // attribuer à #totalQuantité la valeur de totalItems et l'afficher dans le DOM
-     const totalQuantity = document.getElementById('totalQuantity');
-     totalQuantity.textContent = totalItems;
- }
+// attribuer la valeur retournée par parseInt à la variable totalItems
+   totalItems += newQuantity;
+}
+// attribuer à #totalQuantité la valeur de totalItems et l'afficher dans le DOM
+   const totalQuantity = document.getElementById('totalQuantity');
+   totalQuantity.textContent = totalItems;
+}
  
- //je calcule le montant total du panier
+//je calcule le montant total du panier
 
- function totalPrice(){
+function totalPrice(){
    let total = 0;
    productInLocalStorage.forEach((product)=>{
       const totalUnitPrice = product.price * product.quantity;
@@ -142,53 +141,127 @@ function totalArticles() {
    totalPrice.textContent = total;
    }
  
+   //DEMANDER LES INFOS DE L'UTILISATEUR//
 
-
- // je fait un eventListener postForm
+// j'envoie le formulaire dans le serveur
 function postForm() {
-   const orderButton = document.getElementById('order');
-   orderButton.addEventListener('click', () =>submitForm());
-
+   const order = document.getElementById('order');
+   order.addEventListener('click', (event) => {
+   event.preventDefault();
+ 
+// je récupère les données du formulaire dans un objet
+const contact = {
+     firstName : document.getElementById('firstName').value,
+     lastName : document.getElementById('lastName').value,
+     address : document.getElementById('address').value,
+     city : document.getElementById('city').value,
+     email : document.getElementById('email').value
+   }
+ 
+   //vérifier la validation des entrées //
    
-     // je récupère les données du formulaire dans un objet
-  const contact = {
-   firstName : document.getElementById('firstName').value,
-   lastName : document.getElementById('lastName').value,
-   address : document.getElementById('address').value,
-   city : document.getElementById('city').value,
-   email : document.getElementById('email').value,
- }
+//contrôle prénom
+   function controlFirstName() {
+     const validFirstName = contact.firstName;
+     if (/^[^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{3,20}$/.test(validFirstName)) {
+       return true;
+     } else {
+       let firstNameErrorMsg = document.getElementById('firstNameErrorMsg');
+       firstNameErrorMsg.innerText = "Merci de vérifier le prénom, 3 caractères minimum";
+     }
+   } 
+ 
+// contrôle nom
+   function controlName() {
+     const validName = contact.lastName;
+     if (/^([a-zA-Z\u0080-\u024F]+(?:. |-| |'))*[a-zA-Z\u0080-\u024F]*$/.test(validName)) {
+       return true;
+     } else {
+       let lastNameErrorMsg = document.getElementById('lastNameErrorMsg');
+       lastNameErrorMsg.innerText = "Merci de vérifier le nom, 3 caractères minimum, avec des lettres uniquement";
+     }
+   }
 
-    // je mets les valeurs du formulaire et les produits sélectionnés dans un objet
-  const sendFormData = {
-   contact,
-   products,
- }
-    // j'envoie le formulaire + localStorage (sendFormData) 
+// contrôle adresse
+  function controlAddress() {
+   const validAddress = contact.address;
+   if (/^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+/.test(validAddress)) {
+     return true;
+   } else {
+     let addressErrorMsg = document.getElementById('addressErrorMsg');
+     addressErrorMsg.innerText = "Merci de vérifier l'adresse, alphanumérique et sans caractères spéciaux";
+   }
+ } 
 
-   fetch("http://localhost:3000/api/products/order", {
-      method: 'POST',
-      body: JSON.stringify(sendFormData),
-      headers: { 
-        'Content-Type': 'application/json',
-      }
-   })
-   .then(response => response.json())
-   .then((data) => console.log(data));
-}
+// contrôle ville
+   function controlCity() {
+     const validAddress = contact.city;
+     if (/^[^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{3,20}$/.test(validAddress)) {
+       return true;
+     } else {
+       let cityErrorMsg = document.getElementById('cityErrorMsg');
+       cityErrorMsg.innerText = "Merci de vérifier le nom de la ville, 3 caractères minimum, avec des lettres uniquement";
+     }
+   }
+ 
+// contrôle email
+   function controlEmail() {
+     const validEmail = contact.email;
+     if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(validEmail)) {
+       return true;
+     } else {
+       let emailErrorMsg = document.getElementById('emailErrorMsg');
+       emailErrorMsg.innerText = "Erreur ! Email non valide";
+     }
+   }
+ 
+// Après vérification des entrées, j'envoie l'objet contact dans le localStorage
+   function validControl() {
+     if (controlFirstName() && controlName() && controlCity() && controlEmail()) {
+       localStorage.setItem('contact', JSON.stringify(contact));
+       return true;
+     } else {
+         alert('Merci de revérifier les données du formulaire')
+       }
+   }
 
-function submitForm(){
-   const form = document.querySelector(".cart__order__form");
- }
-
+   validControl();
+  
+// je mets les valeurs du formulaire et les produits sélectionnés dans un objet //
+   const sendFormData = {
+     contact,
+     products,
+   }
+ 
+// j'envoie le formulaire + localStorage (sendFormData) que j'envoie au serveur //
+ 
+   const options = {
+     method: 'POST',
+     body: JSON.stringify(sendFormData),
+     headers: { 
+       'Content-Type': 'application/json',
+     }
+   };
+ 
+   fetch("http://localhost:3000/api/products/order", options)
+     .then(response => response.json())
+     .then(data => {
+       localStorage.setItem('orderId', data.orderId);
+         if (validControl()) {
+           document.location.href = 'confirmation.html?id='+ data.orderId;
+         }
+     });
+ 
+ })
+ } 
+ 
 
  async function main() {
-   //const products = await getProduct();
+
    getCartProducts();
    totalArticles();
    totalPrice();
    postForm();
-   submitForm();
  }
  
  main();
