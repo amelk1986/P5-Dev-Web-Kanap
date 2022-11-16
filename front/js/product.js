@@ -15,7 +15,8 @@ function getProduct(){
   .catch (err => console.log(err));   
 };
 
-//Insérer les infos d'un produit (modification du DOM)
+
+//Insérer les infos d'un produit 
 
 function showProduct(product){
 
@@ -56,66 +57,58 @@ function addKanapToCart(productId){
    * 6- Le produit est enregistré ou modifié dans le localStorage 
    */
 
-  const buttonElement = document.getElementById("js_addToCart");
+   const buttonElement = document.getElementById("js_addToCart");
 
   buttonElement.addEventListener('click', () => {
-
-    let selectQuantity = document.getElementById("js_quantity");
-
+ let selectQuantity = document.getElementById("js_quantity");
+//DONNEES ENREGISTREES DANS LE LOCAL STORAGE
     const selection = {
       id: productId,
       color: colorsArray.value,
       quantity: selectQuantity.value,
       price: parseInt(price.textContent),
     };
-  
+     addProductLocalStorage(selection);
+  })
+
+  /*ENREGISTRER LES CLES ET VALEURS DU LOCAL STORAGE
+*Envoie les produits dans le tableau productInLocalStorage puis enregistre dans le localStorage
+*Recherche si un produit est déjà présent
+*Si un produit est déjà présent seule la quantité est mise à jour
+*/
+   function addProductLocalStorage(selection){
     // Récupère les données contenues dans l'objet product du localStorage 
     let productInLocalStorage =  JSON.parse(localStorage.getItem('product'));
- 
-    // ajouter les produits sélectionnés dans le localStorage
-    function addProductLocalStorage(){
-      // Ajout de l'objet, contenant les infos du produit choisi, dans le tableau de product (récupéré juste avant du localStorage)
-      productInLocalStorage.push(selection);
-      // Ajout de l'objet product, contenant le nouveau produit, au localStorage
-      localStorage.setItem('product', JSON.stringify(productInLocalStorage));
-    };
-
-    // créer une boîte de dialogue pour confirmer l'ajout au panier
-    let addConfirm = () => {
-      alert('Le produit a bien été ajouté au panier');
-    };
-
-    let update = false;
-    // s'il y a des produits enregistrés dans le localStorage
-    if (productInLocalStorage) {
-    // verifier que le produit ne soit pas deja dans le localstorage/panier
-    // avec la même couleur
-      productInLocalStorage.forEach(function (productOk, key) {
-        if (productOk.id == productId && productOk.color == colorsArray.value) {
-          productInLocalStorage[key].quantity = parseInt(productOk.quantity) + parseInt(selectQuantity.value);
-          localStorage.setItem('product', JSON.stringify(productInLocalStorage));
-          update = true;
-          addConfirm();
-        }; 
-      });
-      //
-      if (!update) {
-      addProductLocalStorage();
-      addConfirm();
-      };
-    } else { // s'il n'y a aucun produit enregistré dans le localStorage 
-      // créer alors un tableau avec les éléments choisi par l'utilisateur
+    if(productInLocalStorage === null){
       productInLocalStorage = [];
-      addProductLocalStorage();
-      addConfirm();
-    };
-  });
-};
+      productInLocalStorage.push(selection);
+      localStorage.setItem("product" , JSON.stringify (productInLocalStorage)); 
 
+    } else {
+     
+      const found = productInLocalStorage.find(element => element.id == selection.id && element.color);
+      if (found == undefined) {
+        productInLocalStorage.push(selection);
+        localStorage.setItem("product" , JSON.stringify(productInLocalStorage));
+       
+        //SI PRODUIT AVEC MEME ID CHANGER LA COULEUR ET AUGMENTER LA QUANTITE
+      } else
+      if (found){
+         let newQuantity =
+         parseInt(selection.quantity) + parseInt(found.quantity);
+         found.quantity = newQuantity;
+         localStorage.setItem("product" , JSON.stringify(productInLocalStorage));
+      }
+      } 
+      };
+      
+  }
+ 
 async function main(){
   const product = await getProduct();
   showProduct(product);
   addKanapToCart(product._id);
+ 
 };
 
 main();

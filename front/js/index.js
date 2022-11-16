@@ -1,9 +1,12 @@
-function getProduct(){
-    return fetch("http://localhost:3000/api/products")
-    .then(res=>res.json())
-    .then(data=>data)
-    .catch(err=>console.log(err))
+// faire l'appel à l'API /products à partir de la fonction getProduct POUR récupérer les données des produits
+import { getProduct } from './api.js';
+
+// AFFICHER LES PRODUITS
+
+async function main() {
+    displayProduct(await getProduct(null));
 }
+
 function displayProduct(products) {
     const productItemsContainer = document.getElementById("items");
 
@@ -31,13 +34,6 @@ console.log(article)
     article.appendChild(description);
     }
     
-}
-
-
-
-async function main(){
-    const products = await getProduct();
-    displayProduct(products);
 }
 
 main();

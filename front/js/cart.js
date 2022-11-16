@@ -1,6 +1,16 @@
+import { getProduct } from './api.js';
+
 // RECUPERER LES PRODUITS STOCKES DANS LE LOCALSTORAGE   //
 let products = [];
 let productInLocalStorage = JSON.parse(localStorage.getItem('product'));
+
+export async function mainCart() {
+  createCartItems();
+  getCartProducts();
+  totalArticles();
+  totalPrice();
+  postForm();
+}
 
 // AFFICHER LES PRODUITS DU PANIER
 
@@ -8,16 +18,18 @@ let productInLocalStorage = JSON.parse(localStorage.getItem('product'));
 // 2/ Pour chaque produit il faudra faire l'appel à l'API /products/id à partir de la fonction 
 
 // Parcourir la variable productInLocalStorage contenant tous les éléments du localStorage
-for (let i = 0; i < productInLocalStorage.length; i++){
-   let cartItem = document.getElementById("cart__items");
-   console.log(cartItem);
-
-// ajouter l'élément article
-   let cartArticles = document.createElement("article");
-   cartItem.appendChild(cartArticles);
-   cartArticles.setAttribute("data-id", productInLocalStorage[i].id);
-   cartArticles.setAttribute("data-color",  productInLocalStorage[i].color);
-   cartArticles.className = "cart__item";
+function createCartItems() {
+  for (let i = 0; i < productInLocalStorage.length; i++) {
+    let cartItem = document.getElementById("cart__items");
+  
+    // ajouter l'élément article
+    let cartArticles = document.createElement("article");
+    cartItem.appendChild(cartArticles);
+    cartArticles.classList.add("cart__item");
+    cartArticles.setAttribute("data-id", productInLocalStorage[i].id);
+    cartArticles.setAttribute("data-color",  productInLocalStorage[i].color);
+    
+  }
 }
 
 function showProductQuantityAndColor(productId, quantityContainer, descriptionContainer) {
@@ -32,7 +44,7 @@ function showProductQuantityAndColor(productId, quantityContainer, descriptionCo
 
       let quantityInput = document.createElement("input");
       quantityInput.classList.add("itemQuantity");
-      //console.log(quantityInput);
+
       quantityInput.value = productInLocalStorage[i].quantity;
       quantityContainer.appendChild(quantityInput);
       quantityInput.setAttribute("type", "number");
@@ -43,20 +55,12 @@ function showProductQuantityAndColor(productId, quantityContainer, descriptionCo
    }
 }
 
-// faire l'appel à l'API /products/id à partir de la fonction getProduct
-function getProduct(id) {
-   return fetch(`http://localhost:3000/api/products/${id}`)
-     .then((res) => res.json())
-     .then((product) => product)
-     .catch((err) => console.log(err));
- }
-
  function getCartProducts() {
    const cartProducts = JSON.parse(localStorage.getItem('product'));
-   console.log(cartProducts);
 
    cartProducts.forEach(product => {
-      getProduct(product.id).then((apiProduct) => {
+      getProduct(product.id)
+      .then((apiProduct) => {
          displayProductFromApi(apiProduct);
          modifyQtt();
          deleteArticle();
@@ -67,23 +71,30 @@ function getProduct(id) {
  
  async function displayProductFromApi(product) {
 
-   let cartArticles = document.querySelector(".cart__item");
+    let cartArticles = document.querySelectorAll(".cart__item");
+    let cartCurrentArticle = null;
+
+    cartArticles.forEach(cartArticle => {
+      if (cartArticle.dataset.id === product._id) {
+        cartCurrentArticle = cartArticle;
+      }
+    });
  
-// ajouter l'élément div qui va contenir l'image
+    // ajouter l'élément div qui va contenir l'image
      let divCartImages = document.createElement("div");
      divCartImages.className = "cart__item__img";
-     cartArticles.appendChild(divCartImages);
+     cartCurrentArticle.appendChild(divCartImages);
  
      let cartImages = document.createElement("img");
      cartImages.setAttribute("src", product.imageUrl);
      cartImages.setAttribute("alt", product.altTxt);
      divCartImages.appendChild(cartImages);
      
-// ajouter l'élément div qui contien la description
+    // ajouter l'élément div qui contien la description
 
       let divCartContent = document.createElement("div");
       divCartContent.className = "cart__item__content";
-      cartArticles.appendChild(divCartContent);
+      cartCurrentArticle.appendChild(divCartContent);
 
       let divCartDescription = document.createElement("div");
       divCartDescription.className = "cart__item__content__description";
@@ -93,7 +104,7 @@ function getProduct(id) {
       title.innerHTML = product.name;
       divCartDescription.appendChild(title);
 
-// ajouter l'élément div setting
+    // ajouter l'élément div setting
 
       let divCartSetting = document.createElement("div");
       divCartSetting.className = "cart__item__content__settings";
@@ -134,13 +145,7 @@ function modifyQtt() {
            //Selection de l'element à modifier en fonction de son id ET sa couleur
 
            let quantityModif = productInLocalStorage[l].id;
-           console.log(quantityModif);
            let qttModifValue = qttModif[l].valueAsNumber;
-           console.log(qttModif);
-
-         
-           
-           
            const resultFind = productInLocalStorage.find((el) => el.qttModifValue !== quantityModif);
 
            resultFind.quantity = qttModifValue;
@@ -188,7 +193,6 @@ function totalArticles() {
    let totalItems = 0;
    
    for (const l of productInLocalStorage) {
-      console.log(l);
 // analyser et convertir la valeur 'quantité' dans le localstorage en une chaîne
 // et renvoie un entier (parseInteger), sur la base décimale de 10
    const newQuantity = parseInt(l.quantity, 10);
@@ -325,16 +329,6 @@ const contact = {
      });
  
  })
- } 
- 
-
- async function main() {
-
-   getCartProducts();
-   
-   totalArticles();
-   totalPrice();
-   postForm();
  }
- 
- main();
+
+ mainCart();
