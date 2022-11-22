@@ -1,4 +1,4 @@
-// faire l'appel à l'API /products à partir de la fonction getProduct POUR récupérer les données des produits
+// importer l'appel à l'API depuis la page api.js
 import { getProduct } from './api.js';
 
 // AFFICHER LES PRODUITS

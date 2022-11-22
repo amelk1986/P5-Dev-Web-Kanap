@@ -1,3 +1,5 @@
+import { getProduct } from './api.js';
+
 let colorsArray = document.getElementById("js_colors");
 
 // Récupération du paramètre id stocké dans l'URL de la page
@@ -8,11 +10,12 @@ let price = document.getElementById("js_price");
 
 // récupérer les données du produit qui a été sélectioner par l'ID
 
-function getProduct(){
-  return fetch(`http://localhost:3000/api/products/${id}`)
-  .then(res => res.json())
-  .then(product => product)
-  .catch (err => console.log(err));   
+
+async function mainproduct(){
+  
+  showProduct(await getProduct(id));
+  addKanapToCart(id);
+ 
 };
 
 
@@ -64,7 +67,7 @@ function addKanapToCart(productId){
 //DONNEES ENREGISTREES DANS LE LOCAL STORAGE
     const selection = {
       id: productId,
-      color: colorsArray.value,
+      color: [colorsArray.value],
       quantity: selectQuantity.value,
       price: parseInt(price.textContent),
     };
@@ -74,7 +77,6 @@ function addKanapToCart(productId){
   /*ENREGISTRER LES CLES ET VALEURS DU LOCAL STORAGE
 *Envoie les produits dans le tableau productInLocalStorage puis enregistre dans le localStorage
 *Recherche si un produit est déjà présent
-*Si un produit est déjà présent seule la quantité est mise à jour
 */
    function addProductLocalStorage(selection){
     // Récupère les données contenues dans l'objet product du localStorage 
@@ -86,16 +88,20 @@ function addKanapToCart(productId){
 
     } else {
      
-      const found = productInLocalStorage.find(element => element.id == selection.id && element.color);
+      const found = productInLocalStorage.find(element => element.id == selection.id);
       if (found == undefined) {
         productInLocalStorage.push(selection);
         localStorage.setItem("product" , JSON.stringify(productInLocalStorage));
        
-        //SI PRODUIT AVEC MEME ID CHANGER LA COULEUR ET AUGMENTER LA QUANTITE
+        //SI PRODUIT AVEC MEME ID AUGMENTER LA QUANTITE
       } else
       if (found){
-         let newQuantity =
-         parseInt(selection.quantity) + parseInt(found.quantity);
+        console.log(found);
+        if (!found.color.includes(selection.color)) {
+          found.color.push(selection.color[0]);
+        }
+
+         let newQuantity = parseInt(selection.quantity) + parseInt(found.quantity);
          found.quantity = newQuantity;
          localStorage.setItem("product" , JSON.stringify(productInLocalStorage));
       }
@@ -104,11 +110,6 @@ function addKanapToCart(productId){
       
   }
  
-async function main(){
-  const product = await getProduct();
-  showProduct(product);
-  addKanapToCart(product._id);
- 
-};
 
-main();
+
+  mainproduct();

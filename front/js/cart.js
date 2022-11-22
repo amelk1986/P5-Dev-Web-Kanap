@@ -37,8 +37,8 @@ function showProductQuantityAndColor(productId, quantityContainer, descriptionCo
       if (productInLocalStorage[i].id !== productId) {
          continue;
       }
-
       let color = document.createElement("p");
+
       color.innerHTML = productInLocalStorage[i].color;
       descriptionContainer.appendChild(color);
 
@@ -133,60 +133,6 @@ function showProductQuantityAndColor(productId, quantityContainer, descriptionCo
       divDeleteSettigs.appendChild(deleteItem);
       deleteItem.innerHTML = "Supprimer";
  }
-
- // Modification d'une quantité de produit
-function modifyQtt() {
-   let qttModif = document.querySelectorAll(".itemQuantity");
-
-   for (let l = 0; l < qttModif.length; l++){
-       qttModif[l].addEventListener("change" , (event) => {
-           event.preventDefault();
-
-           //Selection de l'element à modifier en fonction de son id ET sa couleur
-
-           let quantityModif = productInLocalStorage[l].id;
-           let qttModifValue = qttModif[l].valueAsNumber;
-           const resultFind = productInLocalStorage.find((el) => el.qttModifValue !== quantityModif);
-
-           resultFind.quantity = qttModifValue;
-           productInLocalStorage[l].quantity = resultFind.quantity;
-
-           localStorage.setItem("product", JSON.stringify(productInLocalStorage));
-       
-           // avertir de la modification et mettre à jour les totaux
-         alert('Votre panier est à jour.');
-         totalArticles();
-         totalPrice();
-           
-       })
-   }
-}
-
-// je supprime un produit dans le panier
-function deleteArticle() {
-   const deleteItem = document.querySelectorAll('.deleteItem');
- 
-   for (let k = 0; k < deleteItem.length; k++) { 
-     deleteItem[k].addEventListener('click', (event) => {
-     event.preventDefault();
- 
-     // enregistrer l'id et la couleur séléctionnés par le bouton supprimer
-     let deleteId = productInLocalStorage[k].id;
-     let deleteColor = productInLocalStorage[k].color;
- 
-     // filtrer l'élément cliqué par le bouton supprimer
-     // en respectant les conditions du callback
-     productInLocalStorage = productInLocalStorage.filter( elt => elt.id !== deleteId || elt.color !== deleteColor);
-       
-     // envoyer les nouvelles données dans le localStorage
-     localStorage.setItem('product', JSON.stringify(productInLocalStorage));
- 
-     // avertir de la suppression et recharger la page
-     alert('Votre article a bien été supprimé.');
-     window.location.href = "cart.html";
-     });
-   }
- }
  
  // j'affiche le total des articles dans le panier
 function totalArticles() {
@@ -216,6 +162,60 @@ function totalPrice(){
    const totalPrice = document.getElementById("totalPrice");
    totalPrice.textContent = total;
    }
+
+    // Modification d'une quantité de produit
+function modifyQtt() {
+  let qttModif = document.querySelectorAll(".itemQuantity");
+
+  for (let l = 0; l < qttModif.length; l++){
+      qttModif[l].addEventListener("change" , (event) => {
+          event.preventDefault();
+
+          //Selection de l'element à modifier en fonction de son id ET sa couleur
+
+          let quantityModif = productInLocalStorage[l].id;
+          let qttModifValue = qttModif[l].valueAsNumber;
+          const resultFind = productInLocalStorage.find((el) => el.qttModifValue !== quantityModif);
+
+          resultFind.quantity = qttModifValue;
+          productInLocalStorage[l].quantity = resultFind.quantity;
+
+          localStorage.setItem("product", JSON.stringify(productInLocalStorage));
+      
+          // avertir de la modification et mettre à jour les totaux
+        alert('Votre panier est à jour.');
+        totalArticles();
+        totalPrice();
+          
+      })
+  }
+}
+
+// je supprime un produit dans le panier
+function deleteArticle() {
+  const deleteItem = document.querySelectorAll('.deleteItem');
+
+  for (let k = 0; k < deleteItem.length; k++) { 
+    deleteItem[k].addEventListener('click', (event) => {
+    event.preventDefault();
+
+    // enregistrer l'id et la couleur séléctionnés par le bouton supprimer
+    let deleteId = productInLocalStorage[k].id;
+    let deleteColor = productInLocalStorage[k].color;
+
+    // filtrer l'élément cliqué par le bouton supprimer
+    // en respectant les conditions du callback
+    productInLocalStorage = productInLocalStorage.filter( elt => elt.id !== deleteId || elt.color !== deleteColor);
+      
+    // envoyer les nouvelles données dans le localStorage
+    localStorage.setItem('product', JSON.stringify(productInLocalStorage));
+
+    // avertir de la suppression et recharger la page
+    alert('Votre article a bien été supprimé.');
+    window.location.href = "cart.html";
+    });
+  }
+}
  
    //DEMANDER LES INFOS DE L'UTILISATEUR//
 
