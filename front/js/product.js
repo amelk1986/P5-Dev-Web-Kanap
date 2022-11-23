@@ -1,3 +1,5 @@
+// récupérer les données du produit qui a été sélectioner par l'ID
+
 import { getProduct } from './api.js';
 
 let colorsArray = document.getElementById("js_colors");
@@ -8,9 +10,7 @@ const params = new URLSearchParams(products_url_id);
 const id = params.get("id");
 let price = document.getElementById("js_price");
 
-// récupérer les données du produit qui a été sélectioner par l'ID
-
-
+//Appeler les fonction
 async function mainproduct(){
   
   showProduct(await getProduct(id));

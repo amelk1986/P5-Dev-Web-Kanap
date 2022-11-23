@@ -124,6 +124,8 @@ function showProductQuantityAndColor(productId, quantityContainer, descriptionCo
       price.innerHTML = `${product.price} €`;
       divCartDescription.appendChild(price);
 
+     // ajouter l'élément div delete
+
       let divDeleteSettigs = document.createElement("div");
       divDeleteSettigs.className = "cart__item__content__settings__delete"
       divCartContent.appendChild(divDeleteSettigs);
@@ -140,7 +142,7 @@ function totalArticles() {
    
    for (const l of productInLocalStorage) {
 // analyser et convertir la valeur 'quantité' dans le localstorage en une chaîne
-// et renvoie un entier (parseInteger), sur la base décimale de 10
+// et renvoie un entier (parseInt), sur la base décimale de 10
    const newQuantity = parseInt(l.quantity, 10);
  
 // attribuer la valeur retournée par parseInt à la variable totalItems
