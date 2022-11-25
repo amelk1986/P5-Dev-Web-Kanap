@@ -4,7 +4,7 @@ import { getProduct } from './api.js';
 
 let colorsArray = document.getElementById("js_colors");
 
-// Récupération du paramètre id stocké dans l'URL de la page
+// Récupération du paramètre id stocké dans l'URL de la page pour transmettre les variables de la page index à la page product
 const products_url_id = window.location.search;
 const params = new URLSearchParams(products_url_id);
 const id = params.get("id");
@@ -25,6 +25,8 @@ function showProduct(product){
 
   let picture = document.querySelector(".item__img");
   let title = document.getElementById("js_title");
+  let price = document.getElementById("js_price");
+  console.log(price);
   
   let description = document.getElementById("js_description");
 
@@ -67,9 +69,8 @@ function addKanapToCart(productId){
 //DONNEES ENREGISTREES DANS LE LOCAL STORAGE
     const selection = {
       id: productId,
-      color: [colorsArray.value],
+      color: colorsArray.value,
       quantity: selectQuantity.value,
-      price: parseInt(price.textContent),
     };
      addProductLocalStorage(selection);
   })
@@ -88,7 +89,8 @@ function addKanapToCart(productId){
 
     } else {
      
-      const found = productInLocalStorage.find(element => element.id == selection.id);
+      const found = productInLocalStorage.find(element => element.id == selection.id && element.color == selection.color);
+      alert (found);
       if (found == undefined) {
         productInLocalStorage.push(selection);
         localStorage.setItem("product" , JSON.stringify(productInLocalStorage));
@@ -96,9 +98,10 @@ function addKanapToCart(productId){
         //SI PRODUIT AVEC MEME ID AUGMENTER LA QUANTITE
       } else
       if (found){
-        console.log(found);
+        
         if (!found.color.includes(selection.color)) {
-          found.color.push(selection.color[0]);
+          found.color.push(selection.color[i]);
+          console.log(found);
         }
 
          let newQuantity = parseInt(selection.quantity) + parseInt(found.quantity);

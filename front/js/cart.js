@@ -38,13 +38,13 @@ function showProductQuantityAndColor(productId, quantityContainer, descriptionCo
          continue;
       }
       let color = document.createElement("p");
-
+      
       color.innerHTML = productInLocalStorage[i].color;
       descriptionContainer.appendChild(color);
 
       let quantityInput = document.createElement("input");
       quantityInput.classList.add("itemQuantity");
-
+      
       quantityInput.value = productInLocalStorage[i].quantity;
       quantityContainer.appendChild(quantityInput);
       quantityInput.setAttribute("type", "number");
@@ -119,7 +119,7 @@ function showProductQuantityAndColor(productId, quantityContainer, descriptionCo
       divCartSettingQuantity.appendChild(Qte);
 
       showProductQuantityAndColor(product._id, divCartSettingQuantity, divCartDescription);
-
+      
       let price = document.createElement("p");
       price.innerHTML = `${product.price} €`;
       divCartDescription.appendChild(price);

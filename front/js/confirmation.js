@@ -2,10 +2,10 @@
 
 function checkout(){
     const orderId = document.getElementById('orderId');
-    orderId.innerHTML = localStorage.getItem('orderId');
+    orderId.innerHTML = localStorage.getItem('orderId');  
 
 // retirer tous les éléments
 
-    localStorage.clear();
+    window.localStorage.removeItem('product');
 }
 checkout();
