@@ -8,7 +8,7 @@ let colorsArray = document.getElementById("js_colors");
 const products_url_id = window.location.search;
 const params = new URLSearchParams(products_url_id);
 const id = params.get("id");
-let price = document.getElementById("js_price");
+
 
 //Appeler les fonction
 async function mainproduct(){
@@ -79,37 +79,27 @@ function addKanapToCart(productId){
 *Envoie les produits dans le tableau productInLocalStorage puis enregistre dans le localStorage
 *Recherche si un produit est déjà présent
 */
-   function addProductLocalStorage(selection){
-    // Récupère les données contenues dans l'objet product du localStorage 
-    let productInLocalStorage =  JSON.parse(localStorage.getItem('product'));
-    if(productInLocalStorage === null){
-      productInLocalStorage = [];
+function addProductLocalStorage(selection){
+  // Récupère les données contenues dans l'objet product du localStorage 
+  let productInLocalStorage =  JSON.parse(localStorage.getItem('product'));
+  if(productInLocalStorage === null){
+    productInLocalStorage = [];
+    productInLocalStorage.push(selection);
+    localStorage.setItem("product" , JSON.stringify (productInLocalStorage)); 
+  } else {
+    // SUR LE PRODUIT AVEC LE MEME ID ET CHANGER LA COULEUR
+    const found = productInLocalStorage.find(element => element.id == selection.id && element.color == selection.color);
+    if (!found) {
       productInLocalStorage.push(selection);
-      localStorage.setItem("product" , JSON.stringify (productInLocalStorage)); 
-
+      localStorage.setItem("product" , JSON.stringify(productInLocalStorage));
+      //SI PRODUIT AVEC MEME ID AUGMENTER LA QUANTITE ET CHOISIR UNE AUTRE COULEUR
     } else {
-     
-      const found = productInLocalStorage.find(element => element.id == selection.id && element.color == selection.color);
-      alert (found);
-      if (found == undefined) {
-        productInLocalStorage.push(selection);
-        localStorage.setItem("product" , JSON.stringify(productInLocalStorage));
-       
-        //SI PRODUIT AVEC MEME ID AUGMENTER LA QUANTITE
-      } else
-      if (found){
-        
-        if (!found.color.includes(selection.color)) {
-          found.color.push(selection.color[i]);
-          console.log(found);
-        }
-
-         let newQuantity = parseInt(selection.quantity) + parseInt(found.quantity);
-         found.quantity = newQuantity;
-         localStorage.setItem("product" , JSON.stringify(productInLocalStorage));
-      }
-      } 
-      };
+       let newQuantity = parseInt(selection.quantity) + parseInt(found.quantity);
+       found.quantity = newQuantity;
+       localStorage.setItem("product" , JSON.stringify(productInLocalStorage));
+    }
+  };   
+}
       
   }
  

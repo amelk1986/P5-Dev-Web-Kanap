@@ -1,11 +1,7 @@
 //confirmation de la commande, un affichage du numéro de commande en question.
 
-function checkout(){
-    const orderId = document.getElementById('orderId');
-    orderId.innerHTML = localStorage.getItem('orderId');  
+const id = new URL(window.location.href).searchParams.get("id");
+console.log(id);
 
-// retirer tous les éléments
-
-    window.localStorage.removeItem('product');
-}
-checkout();
+const orderId = document.getElementById('orderId');
+orderId.innerHTML = id;

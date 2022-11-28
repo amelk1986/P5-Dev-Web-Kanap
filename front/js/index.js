@@ -4,7 +4,7 @@ import { getProduct } from './api.js';
 // AFFICHER LES PRODUITS
 
 async function main() {
-    displayProduct(await getProduct(null));
+    displayProduct(await getProduct(""));
 }
 
 function displayProduct(products) {

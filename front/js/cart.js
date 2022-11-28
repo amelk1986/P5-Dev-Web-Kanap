@@ -3,12 +3,13 @@ import { getProduct } from './api.js';
 // RECUPERER LES PRODUITS STOCKES DANS LE LOCALSTORAGE   //
 let products = [];
 let productInLocalStorage = JSON.parse(localStorage.getItem('product'));
+let allProduct = await getProduct("")
 
-export async function mainCart() {
+async function mainCart() {
   createCartItems();
   getCartProducts();
   totalArticles();
-  totalPrice();
+  totalPrice(allProduct);
   postForm();
 }
 
@@ -20,23 +21,25 @@ export async function mainCart() {
 // Parcourir la variable productInLocalStorage contenant tous les éléments du localStorage
 function createCartItems() {
   for (let i = 0; i < productInLocalStorage.length; i++) {
+    
     let cartItem = document.getElementById("cart__items");
   
     // ajouter l'élément article
     let cartArticles = document.createElement("article");
-    cartItem.appendChild(cartArticles);
+    
     cartArticles.classList.add("cart__item");
     cartArticles.setAttribute("data-id", productInLocalStorage[i].id);
     cartArticles.setAttribute("data-color",  productInLocalStorage[i].color);
+
+    cartItem.appendChild(cartArticles);
     
   }
 }
 
-function showProductQuantityAndColor(productId, quantityContainer, descriptionContainer) {
-   for (let i = 0; i < productInLocalStorage.length; i++) {
-      if (productInLocalStorage[i].id !== productId) {
-         continue;
-      }
+function showProductQuantityAndColor(productId, quantityContainer, descriptionContainer, productColor) {
+  for (let i = 0; i < productInLocalStorage.length; i++) {
+      if (productInLocalStorage[i].id === productId && productInLocalStorage[i].color === productColor) {
+
       let color = document.createElement("p");
       
       color.innerHTML = productInLocalStorage[i].color;
@@ -51,7 +54,7 @@ function showProductQuantityAndColor(productId, quantityContainer, descriptionCo
       quantityInput.setAttribute("min", "1");
       quantityInput.setAttribute("max", "100");
       quantityInput.setAttribute("name", "itemQuantity");
-      break;
+      }
    }
 }
 
@@ -61,33 +64,33 @@ function showProductQuantityAndColor(productId, quantityContainer, descriptionCo
    cartProducts.forEach(product => {
       getProduct(product.id)
       .then((apiProduct) => {
-         displayProductFromApi(apiProduct);
+         displayProductFromApi(product, apiProduct);
          modifyQtt();
-         deleteArticle();
-
+         deleteArticle(); 
+        
       });
    });
  }
  
- async function displayProductFromApi(product) {
-
+ async function displayProductFromApi(product, apiProduct) {
+  
     let cartArticles = document.querySelectorAll(".cart__item");
     let cartCurrentArticle = null;
-
-    cartArticles.forEach(cartArticle => {
-      if (cartArticle.dataset.id === product._id) {
+    
+     cartArticles.forEach(cartArticle => {
+       if (cartArticle.dataset.id === product.id && cartArticle.dataset.color == product.color) {
         cartCurrentArticle = cartArticle;
       }
     });
- 
+    
     // ajouter l'élément div qui va contenir l'image
      let divCartImages = document.createElement("div");
      divCartImages.className = "cart__item__img";
      cartCurrentArticle.appendChild(divCartImages);
  
      let cartImages = document.createElement("img");
-     cartImages.setAttribute("src", product.imageUrl);
-     cartImages.setAttribute("alt", product.altTxt);
+     cartImages.setAttribute("src", apiProduct.imageUrl);
+     cartImages.setAttribute("alt", apiProduct.altTxt);
      divCartImages.appendChild(cartImages);
      
     // ajouter l'élément div qui contien la description
@@ -101,7 +104,7 @@ function showProductQuantityAndColor(productId, quantityContainer, descriptionCo
       divCartContent.appendChild(divCartDescription);
  
       let title = document.createElement("h2");
-      title.innerHTML = product.name;
+      title.innerHTML = apiProduct.name;
       divCartDescription.appendChild(title);
 
     // ajouter l'élément div setting
@@ -118,10 +121,10 @@ function showProductQuantityAndColor(productId, quantityContainer, descriptionCo
       Qte.innerHTML = "Qté :";
       divCartSettingQuantity.appendChild(Qte);
 
-      showProductQuantityAndColor(product._id, divCartSettingQuantity, divCartDescription);
+      showProductQuantityAndColor(product.id, divCartSettingQuantity, divCartDescription, product.color);
       
       let price = document.createElement("p");
-      price.innerHTML = `${product.price} €`;
+      price.innerHTML = `${apiProduct.price} €`;
       divCartDescription.appendChild(price);
 
      // ajouter l'élément div delete
@@ -155,10 +158,11 @@ function totalArticles() {
  
 //je calcule le montant total du panier
 
-function totalPrice(){
+function totalPrice(apiProducts){
    let total = 0;
    productInLocalStorage.forEach((product)=>{
-      const totalUnitPrice = product.price * product.quantity;
+      let apiProduct = apiProducts.find(el => el._id === product.id )
+      const totalUnitPrice = apiProduct.price * product.quantity;
       total += totalUnitPrice;
    })
    const totalPrice = document.getElementById("totalPrice");
@@ -181,14 +185,12 @@ function modifyQtt() {
 
           resultFind.quantity = qttModifValue;
           productInLocalStorage[l].quantity = resultFind.quantity;
+          
 
           localStorage.setItem("product", JSON.stringify(productInLocalStorage));
       
-          // avertir de la modification et mettre à jour les totaux
-        alert('Votre panier est à jour.');
         totalArticles();
-        totalPrice();
-          
+        totalPrice(allProduct); 
       })
   }
 }
@@ -198,22 +200,19 @@ function deleteArticle() {
   const deleteItem = document.querySelectorAll('.deleteItem');
 
   for (let k = 0; k < deleteItem.length; k++) { 
-    deleteItem[k].addEventListener('click', (event) => {
-    event.preventDefault();
-
+    deleteItem[k].addEventListener('click', () => {
+    
     // enregistrer l'id et la couleur séléctionnés par le bouton supprimer
     let deleteId = productInLocalStorage[k].id;
     let deleteColor = productInLocalStorage[k].color;
 
     // filtrer l'élément cliqué par le bouton supprimer
-    // en respectant les conditions du callback
+   
     productInLocalStorage = productInLocalStorage.filter( elt => elt.id !== deleteId || elt.color !== deleteColor);
       
     // envoyer les nouvelles données dans le localStorage
     localStorage.setItem('product', JSON.stringify(productInLocalStorage));
 
-    // avertir de la suppression et recharger la page
-    alert('Votre article a bien été supprimé.');
     window.location.href = "cart.html";
     });
   }
@@ -295,7 +294,7 @@ const contact = {
  
 // Après vérification des entrées, j'envoie l'objet contact dans le localStorage
    function validControl() {
-     if (controlFirstName() && controlName() && controlCity() && controlEmail()) {
+     if (controlFirstName() && controlName() && controlCity() && controlAddress() && controlEmail()) {
        localStorage.setItem('contact', JSON.stringify(contact));
        return true;
      } else {
@@ -324,7 +323,7 @@ const contact = {
    fetch("http://localhost:3000/api/products/order", options)
      .then(response => response.json())
      .then(data => {
-       localStorage.setItem('orderId', data.orderId);
+      window.localStorage.removeItem('product');
          if (validControl()) {
            document.location.href = 'confirmation.html?id='+ data.orderId;
          }
