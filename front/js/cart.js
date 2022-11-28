@@ -4,6 +4,7 @@ import { getProduct } from './api.js';
 let products = [];
 let productInLocalStorage = JSON.parse(localStorage.getItem('product'));
 let allProduct = await getProduct("")
+console.log(allProduct);
 
 async function mainCart() {
   createCartItems();
@@ -58,18 +59,20 @@ function showProductQuantityAndColor(productId, quantityContainer, descriptionCo
    }
 }
 
- function getCartProducts() {
+  function getCartProducts() {
    const cartProducts = JSON.parse(localStorage.getItem('product'));
 
    cartProducts.forEach(product => {
-      getProduct(product.id)
+  let result = getProduct(product.id);
+      result
       .then((apiProduct) => {
          displayProductFromApi(product, apiProduct);
          modifyQtt();
-         deleteArticle(); 
+         
         
-      });
+      }); 
    });
+    
  }
  
  async function displayProductFromApi(product, apiProduct) {
@@ -137,6 +140,7 @@ function showProductQuantityAndColor(productId, quantityContainer, descriptionCo
       deleteItem.className = "deleteItem";
       divDeleteSettigs.appendChild(deleteItem);
       deleteItem.innerHTML = "Supprimer";
+      deleteArticle(deleteItem);
  }
  
  // j'affiche le total des articles dans le panier
@@ -196,27 +200,27 @@ function modifyQtt() {
 }
 
 // je supprime un produit dans le panier
-function deleteArticle() {
-  const deleteItem = document.querySelectorAll('.deleteItem');
-
-  for (let k = 0; k < deleteItem.length; k++) { 
-    deleteItem[k].addEventListener('click', () => {
+function deleteArticle(deleteItem) {
+ 
+    deleteItem.addEventListener('click', () => {
+    const articleContainer = deleteItem.parentNode.parentNode.parentNode;
     
     // enregistrer l'id et la couleur séléctionnés par le bouton supprimer
-    let deleteId = productInLocalStorage[k].id;
-    let deleteColor = productInLocalStorage[k].color;
+    
+    let deleteId = articleContainer.dataset.id;
+    let deleteColor = articleContainer.dataset.color;
 
     // filtrer l'élément cliqué par le bouton supprimer
    
-    productInLocalStorage = productInLocalStorage.filter( elt => elt.id !== deleteId || elt.color !== deleteColor);
-      
+    productInLocalStorage = productInLocalStorage.filter( elt => elt.id+'/'+elt.color !== deleteId+'/'+deleteColor);
+     console.log(productInLocalStorage);
     // envoyer les nouvelles données dans le localStorage
     localStorage.setItem('product', JSON.stringify(productInLocalStorage));
 
     window.location.href = "cart.html";
     });
   }
-}
+
  
    //DEMANDER LES INFOS DE L'UTILISATEUR//
 
