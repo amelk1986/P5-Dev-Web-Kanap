@@ -1,4 +1,6 @@
 import { getProduct } from './api.js';
+import{controlFirstName,controlName,controlAddress,controlCity,controlEmail} from './form.js';
+
 
 // RECUPERER LES PRODUITS STOCKES DANS LE LOCALSTORAGE   //
 let products = [];
@@ -239,74 +241,18 @@ const contact = {
      email : document.getElementById('email').value
    }
  
-   //vérifier la validation des entrées //
-   
-//contrôle prénom
-   function controlFirstName() {
-     const validFirstName = contact.firstName;
-     if (/^[^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{3,20}$/.test(validFirstName)) {
-       return true;
-     } else {
-       let firstNameErrorMsg = document.getElementById('firstNameErrorMsg');
-       firstNameErrorMsg.innerText = "Merci de vérifier le prénom, 3 caractères minimum";
-     }
-   } 
- 
-// contrôle nom
-   function controlName() {
-     const validName = contact.lastName;
-     if (/^([a-zA-Z\u0080-\u024F]+(?:. |-| |'))*[a-zA-Z\u0080-\u024F]*$/.test(validName)) {
-       return true;
-     } else {
-       let lastNameErrorMsg = document.getElementById('lastNameErrorMsg');
-       lastNameErrorMsg.innerText = "Merci de vérifier le nom, 3 caractères minimum, avec des lettres uniquement";
-     }
-   }
+ // Après vérification des entrées, j'envoie l'objet contact dans le localStorage
+ function validControl() {
+  if (controlFirstName(contact) && controlName(contact) && controlCity(contact) && controlAddress(contact) && controlEmail(contact)) {
+    localStorage.setItem('contact', JSON.stringify(contact));
+    return true;
+  } else {
+      alert('Merci de revérifier les données du formulaire')
+      return false;
+    }
+}
 
-// contrôle adresse
-  function controlAddress() {
-   const validAddress = contact.address;
-   if (/^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+/.test(validAddress)) {
-     return true;
-   } else {
-     let addressErrorMsg = document.getElementById('addressErrorMsg');
-     addressErrorMsg.innerText = "Merci de vérifier l'adresse, alphanumérique et sans caractères spéciaux";
-   }
- } 
-
-// contrôle ville
-   function controlCity() {
-     const validAddress = contact.city;
-     if (/^[^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{3,20}$/.test(validAddress)) {
-       return true;
-     } else {
-       let cityErrorMsg = document.getElementById('cityErrorMsg');
-       cityErrorMsg.innerText = "Merci de vérifier le nom de la ville, 3 caractères minimum, avec des lettres uniquement";
-     }
-   }
- 
-// contrôle email
-   function controlEmail() {
-     const validEmail = contact.email;
-     if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(validEmail)) {
-       return true;
-     } else {
-       let emailErrorMsg = document.getElementById('emailErrorMsg');
-       emailErrorMsg.innerText = "Erreur ! Email non valide";
-     }
-   }
- 
-// Après vérification des entrées, j'envoie l'objet contact dans le localStorage
-   function validControl() {
-     if (controlFirstName() && controlName() && controlCity() && controlAddress() && controlEmail()) {
-       localStorage.setItem('contact', JSON.stringify(contact));
-       return true;
-     } else {
-         alert('Merci de revérifier les données du formulaire')
-       }
-   }
-
-   validControl();
+   //validControl();
   
 // je mets les valeurs du formulaire et les produits sélectionnés dans un objet //
    const sendFormData = {
@@ -323,16 +269,16 @@ const contact = {
        'Content-Type': 'application/json',
      }
    };
- 
+   if (validControl()) {
    fetch("http://localhost:3000/api/products/order", options)
      .then(response => response.json())
      .then(data => {
       window.localStorage.removeItem('product');
-         if (validControl()) {
+         
            document.location.href = 'confirmation.html?id='+ data.orderId;
-         }
+         
      });
- 
+ }
  })
  }
 
